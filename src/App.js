@@ -19,7 +19,7 @@ function App() {
                     (
                         <div key={index} className="bg-white w-full sm:max-w-sm shadow-md rounded-xl overflow-hidden py-8">
                             <div className="px-6 py-4">
-                                <h2 className="text-xl font-semibold text-gray-800">{campaign.title} - {shortenAccount(campaign?.owner)}</h2>
+                                <h2 className="text-2xl text-black font-semibold text-gray-800">{campaign.title.replace(/"/g, '')} </h2>
                                 <p className="mt-2 font-bold text-gray-600">Duration - {formatDate(ethers.formatUnits(campaign?.durationTime, 0))}</p>
                                 <p className="mt-2 font-bold text-gray-600">Balance - {ethers.formatUnits(campaign?.fundingBalance, 0)}ETH</p>
                             </div>
