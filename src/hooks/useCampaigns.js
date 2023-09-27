@@ -16,7 +16,7 @@ const useCampaign = () => {
   const getCampaignCount = async () => {
     try {
       const result = await crowFundContract.id();
-      return ethers.formatUnits(result, 0);
+      return Number(result);
     } catch (error) {
       throw new Error(`Error calling id: ${error}`);
     }
@@ -28,7 +28,6 @@ const useCampaign = () => {
         const result = await crowFundContract.crowd(index);
         d.push(result)
       }
-      console.log(d[0]?.fundingGoal)
       return d;
     } catch (error) {
       throw new Error(`Error calling crowd: ${error}`);
