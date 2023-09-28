@@ -119,7 +119,7 @@ const ContributeButton = ({ campaignId }) => {
                     {isActive ? (
                       <div
                         onClick={handleContributeCampaign}
-                        className={`hidden cursor-pointer w-full rounded-md bg-blue-400 p-3 text-sm font-medium text-white hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 text-center`}
+                        className={`cursor-pointer w-full rounded-md bg-blue-400 p-3 text-sm font-medium text-white hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 text-center`}
                       >
                         {sendingTx
                           ? "Contributing..."
