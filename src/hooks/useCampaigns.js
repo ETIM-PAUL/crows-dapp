@@ -23,11 +23,13 @@ const useCampaign = () => {
   }
   const getCampaigns = async (count) => {
     try {
+      console.log(count[0])
       const d = [];
       for (let index = 1; index <= count[0]; index++) {
         const result = await crowFundContract.crowd(index);
         d.push(result)
       }
+      console.log(d)
       return d;
     } catch (error) {
       throw new Error(`Error calling crowd: ${error}`);

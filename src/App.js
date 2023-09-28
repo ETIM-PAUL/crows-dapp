@@ -1,35 +1,17 @@
-import { ethers } from "ethers";
+import AllCampaigns from "./component/AllCampaigns";
 import CreateCampaign from "./component/CreateCampaign";
 import Header from "./component/Header";
-import useCampaign from "./hooks/useCampaigns";
-import { formatDate, shortenAccount } from "./utils";
+import useAllCampaigns from "./hooks/useAllCampaigns";
 
 function App() {
-    const campaignCount = useCampaign()
+    const campaigns = useAllCampaigns();
     return (
         <div className="">
             <Header />
 
             <main className="pt-10 App bg-gray-500 min-h-screen">
                 <CreateCampaign />
-                {campaignCount.length === 0 &&
-                    <span className="font-bold text-center block w-full text-3xl text-white mt-3">No Campaigns Yet</span>}
-                <div className="flex flex-wrap justify-center gap-10 px-20 py-10 w-ful">
-                    {!!campaignCount && campaignCount.map((campaign, index) =>
-                    (
-                        <div key={index} className="bg-white w-full sm:max-w-sm shadow-md rounded-xl overflow-hidden py-8">
-                            <div className="px-6 py-4">
-                                <h2 className="text-2xl text-black font-semibold text-gray-800">{campaign.title.replace(/"/g, '')} </h2>
-                                <p className="mt-2 font-bold text-gray-600">Duration - {formatDate(Number(campaign?.durationTime))}</p>
-                                <p className="mt-2 font-bold text-gray-600">Balance - {Number(campaign?.fundingBalance)}ETH</p>
-                            </div>
-                            <div className="px-6 pt-4 pb-2">
-                                <span className="inline-block bg-blue-200 text-blue-800 text-sm px-4 py-2 rounded-full">{Number(campaign.fundingGoal)}ETH</span>
-                                <span className={`${campaign.isActive ? "bg-green-200 text-green-800" : "bg-gray-400 text-white"} inline-block text-sm px-4 py-2 rounded-full ml-2`}>{campaign.isActive ? "Active" : "Inactive"}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <AllCampaigns />
             </main>
 
         </div>

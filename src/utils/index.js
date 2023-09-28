@@ -1,5 +1,7 @@
-import { ethers } from "ethers";
-import { supportedChains } from "../constants";
+import { ethers, toBigInt } from "ethers";
+import { rpcUrlsMap, supportedChains } from "../constants";
+import { crowdfundContractAddress } from "../constants/addresses";
+import crowdFundAbi from "../constants/abis/crowdfund.json";
 
 export const isSupportedChain = (chainId) =>
     supportedChains.includes(Number(chainId));
@@ -7,13 +9,31 @@ export const isSupportedChain = (chainId) =>
 export const shortenAccount = (account) =>
     `${account.substring(0, 6)}...${account.substring(38)}`;
 
-export const getReadOnlyProvider = () =>
-    new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/");
+export const getReadOnlyProvider = (chainId) => {
+    return new ethers.JsonRpcProvider(rpcUrlsMap[chainId]);
+};
 
-export const crowdFundingAddress = "0x46f44F2D1af04D54ab5BCbEF9F4D0Df9baDc1B8C";
+export const getContract = async (address, abi, provider, withWrite) => {
+    let signer;
+    if (withWrite) signer = await provider.getSigner();
+
+    return new ethers.Contract(
+        address,
+        abi,
+        withWrite ? signer ?? provider : provider
+    );
+};
+
+export const getCrowdfundContract = async (provider, withWrite) => {
+    return await getContract(
+        crowdfundContractAddress,
+        crowdFundAbi,
+        provider,
+        withWrite
+    );
+};
 
 export const formatDate = (time) => {
-
     // Convert the timestamp to milliseconds by multiplying it by 1000
     const date = new Date(time * 1000);
 
@@ -24,16 +44,42 @@ export const formatDate = (time) => {
 
     // Create an array of month names to map the numeric month to its name
     const monthNames = [
-        'January', 'February', 'March', 'April',
-        'May', 'June', 'July', 'August',
-        'September', 'October', 'November', 'December'
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
     ];
 
     // Get the month name using the month value as an index in the monthNames array
     const monthName = monthNames[month - 1];
 
-    const formattedDate = `${monthName} ${day}, ${year}`
+    const formattedDate = `${monthName} ${day}, ${year}`;
 
     return formattedDate;
+};
 
+export const checkExpire = (time) => {
+    function isTimestampInThePast(timestamp) {
+        const dateFromTimestamp = new Date(timestamp);
+
+        const currentTime = new Date();
+
+        return dateFromTimestamp < currentTime;
+    }
+
+    const timestamp = time; // Replace with your timestamp
+    const isInThePast = isTimestampInThePast(timestamp);
+    console.log(isInThePast)
+    return isInThePast;
 }
+
+export const calculateGasMargin = (value) =>
+    (toBigInt(value) * toBigInt(120)) / toBigInt(100);
