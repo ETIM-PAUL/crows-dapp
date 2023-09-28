@@ -14,7 +14,7 @@ const ContributeButton = ({ campaignId }) => {
   // const [campaignId, setCampaignId] = useState(null)
   const [sendingTx, setSendingTx] = useState(false);
   const { connect, isActive, account, switchToChain } = useConnection();
-  const balance = useBalance()
+  const balance = useBalance(account)
   const contributeCampaign = useContributeCampaign()
   function closeModal() {
     setIsOpen(false);
@@ -38,7 +38,7 @@ const ContributeButton = ({ campaignId }) => {
       );
       const receipt = await tx.wait();
       if (receipt.status === 0) return alert("tx failed");
-      closeModal();
+      // closeModal();
       alert("contribution to campaign successful!!");
     } catch (error) {
       console.log("error: ", error);
@@ -119,7 +119,7 @@ const ContributeButton = ({ campaignId }) => {
                     {isActive ? (
                       <div
                         onClick={handleContributeCampaign}
-                        className={`cursor-pointer w-full rounded-md bg-blue-400 p-3 text-sm font-medium text-white hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 text-center`}
+                        className={`cursor-pointer w-full rounded-md bg-blue-400 p-3 text-sm font-medium text-white hover:bg-opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 text-center disabled:cursor-disabled`}
                       >
                         {sendingTx
                           ? "Contributing..."
