@@ -1,31 +1,36 @@
 import { useCallback } from "react";
 import { useConnection } from "../context/connection";
 import { calculateGasMargin, getCrowdfundContract } from "../utils";
+import useCampaignCount from "./useCampaignCount";
 
-const useContributeCampaign = () => {
-  const { isActive, provider } = useConnection();
-  const contributeCampaign = useCallback(
-    async (contribution, id) => {
-      console.log(contribution, id)
-      if (!contribution)
-        return alert("Please enter contribution amount");
-      if (!isActive) return alert("please, connect");
+const useContribute = () => {
+  const { provider, isActive } = useConnection();
+  const campaignLength = useCampaignCount();
+  const contribute = useCallback(
+    async (id, amount) => {
+      console.log({ amount });
+      if (!isActive || !provider) return;
+      if (!campaignLength) return;
+      if (Number(id) > campaignLength)
+        return alert("campaign does not exist");
       const contract = await getCrowdfundContract(provider, true);
+
       const estimatedGas = await contract.contributeEth.estimateGas(
-        contribution
+        Number(id),
+        {
+          value: amount,
+        }
       );
 
-      // console.log(estimatedGas)
-
-      return contract.contributeEth(id, {
+      return contract.contributeEth(Number(id), {
+        value: amount,
         gasLimit: calculateGasMargin(estimatedGas),
-        value: contribution,
       });
     },
-    [isActive, provider]
+    [campaignLength, isActive, provider]
   );
 
-  return contributeCampaign;
+  return contribute;
 };
 
-export default useContributeCampaign;
+export default useContribute;

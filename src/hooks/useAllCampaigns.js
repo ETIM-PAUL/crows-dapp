@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useCampaignCount from "./useCampaignCount";
 import { useConnection } from "../context/connection";
-import { getCrowdfundContract } from "../utils";
+import {
+    getCrowdfundContract,
+    getCrowdfundContractWithProvider,
+} from "../utils";
 
 const useAllCampaigns = () => {
     const [campaigns, setCampaigns] = useState([]);
+    const [contributors, setContributors] = useState([]);
     const { provider } = useConnection();
     const campaignNo = useCampaignCount();
 
@@ -20,7 +24,13 @@ const useAllCampaigns = () => {
                     contract.crowd(id)
                 );
 
+                const campaignContributors = campaignsKeys.map((id) =>
+                    contract.getContributors(id)
+                );
+
+
                 const campaignResults = await Promise.all(campaignPromises);
+                const getContributors = await Promise.all(campaignContributors);
 
                 const campaignDetails = campaignResults.map(
                     (details, index) => ({
@@ -31,7 +41,7 @@ const useAllCampaigns = () => {
                         durationTime: Number(details.durationTime),
                         isActive: details.isActive,
                         fundingBalance: details.fundingBalance,
-                        contributors: details.contributors,
+                        contributors: getContributors[index]
                     })
                 );
 
@@ -43,6 +53,21 @@ const useAllCampaigns = () => {
 
         fetchAllCampaigns();
     }, [campaignNo, provider]);
+
+    useEffect(() => {
+        // Listen for event
+        const handleProposeCampaignEvent = (id, title, amount, duration) => {
+            setCampaigns([...campaigns, { id, title, fundingGoal: amount, durationTime: Number(duration), isActive: true, fundingBalance: 0, contributors: [] }])
+        };
+        const contract = getCrowdfundContractWithProvider(provider);
+        contract.on("ProposeCampaign", handleProposeCampaignEvent);
+
+        return () => {
+            contract.off("ProposeCampaign", handleProposeCampaignEvent);
+        };
+    }, [campaigns]);
+
+
     return campaigns;
 };
 

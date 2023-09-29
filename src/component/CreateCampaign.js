@@ -36,7 +36,10 @@ const CreateCampaign = () => {
             );
             const receipt = await tx.wait();
             if (receipt.status === 0) return alert("tx failed");
-
+            closeModal();
+            setTitle("")
+            setGoal(0.5)
+            setDuration(1)
             alert("campaign created!!");
         } catch (error) {
             console.log("error: ", error);

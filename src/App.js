@@ -1,17 +1,24 @@
-import AllCampaigns from "./component/AllCampaigns";
-import CreateCampaign from "./component/CreateCampaign";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Header from "./component/Header";
-import useAllCampaigns from "./hooks/useAllCampaigns";
+import Home from "./pages/Home";
+import Campaign from "./pages/campaign";
 
 function App() {
-    const campaigns = useAllCampaigns();
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <Home />,
+        },
+        {
+            path: "/campaign/:id",
+            element: <Campaign />,
+        },
+    ]);
     return (
         <div className="">
             <Header />
-
-            <main className="pt-10 App bg-gray-500 min-h-screen">
-                <CreateCampaign />
-                <AllCampaigns />
+            <main className="mt-10">
+                <RouterProvider router={router} />
             </main>
 
         </div>
